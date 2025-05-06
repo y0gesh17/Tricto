@@ -1,10 +1,38 @@
 import React from "react";
 import ProductCard from "./ProductCard";
 import { useAppContext } from "@/context/AppContext";
+import { useEffect, useState } from "react";
 
 const HomeProducts = () => {
 
-  const { products, router } = useAppContext()
+  const { products, router,editProductFlag } = useAppContext()
+  useEffect(() => {
+    products.forEach((p) => {
+     
+      console.log("OP1")
+        editProductFlag(p._id, 0);
+      
+    });
+  }, []);
+  useEffect(() => {
+    const handleBackButton = (event) => {
+      console.log("Back button clicked!");
+      products.forEach((p) => {
+     
+        console.log("OP1")
+          editProductFlag(p._id, 0);
+        
+      });
+      // ✅ Run your specific logic here
+      // e.g., reset state, show a confirmation, etc.
+    };
+  
+    window.addEventListener("popstate", handleBackButton);
+  
+    return () => {
+      window.removeEventListener("popstate", handleBackButton);
+    };
+  }, []);
 
   return (
     <div className="flex flex-col items-center pt-14">

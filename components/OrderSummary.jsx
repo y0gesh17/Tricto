@@ -1,31 +1,36 @@
+'use client'
+
 import { addressDummyData } from "@/assets/assets";
 import { useAppContext } from "@/context/AppContext";
 import React, { useEffect, useState } from "react";
 
 const OrderSummary = () => {
+  const { currency, router, getCartCount, getCartAmount, createOrder } = useAppContext();
 
-  const { currency, router, getCartCount, getCartAmount } = useAppContext()
   const [selectedAddress, setSelectedAddress] = useState(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-
   const [userAddresses, setUserAddresses] = useState([]);
 
   const fetchUserAddresses = async () => {
-    setUserAddresses(addressDummyData);
-  }
+    setUserAddresses(addressDummyData); // You can replace this with real API call later
+  };
 
   const handleAddressSelect = (address) => {
     setSelectedAddress(address);
     setIsDropdownOpen(false);
   };
 
-  const createOrder = async () => {
-
-  }
+  const handlePlaceOrder = () => {
+    if (!selectedAddress) {
+      alert("Please select an address before placing the order.");
+      return;
+    }
+    createOrder(selectedAddress); // Call the context function with selected address
+  };
 
   useEffect(() => {
     fetchUserAddresses();
-  }, [])
+  }, []);
 
   return (
     <div className="w-full md:w-96 bg-gray-500/5 p-5">
@@ -33,7 +38,9 @@ const OrderSummary = () => {
         Order Summary
       </h2>
       <hr className="border-gray-500/30 my-5" />
+
       <div className="space-y-6">
+        {/* Address Dropdown */}
         <div>
           <label className="text-base font-medium uppercase text-gray-600 block mb-2">
             Select Address
@@ -48,10 +55,21 @@ const OrderSummary = () => {
                   ? `${selectedAddress.fullName}, ${selectedAddress.area}, ${selectedAddress.city}, ${selectedAddress.state}`
                   : "Select Address"}
               </span>
-              <svg className={`w-5 h-5 inline float-right transition-transform duration-200 ${isDropdownOpen ? "rotate-0" : "-rotate-90"}`}
-                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="#6B7280"
+              <svg
+                className={`w-5 h-5 inline float-right transition-transform duration-200 ${
+                  isDropdownOpen ? "rotate-0" : "-rotate-90"
+                }`}
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="#6B7280"
               >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M19 9l-7 7-7-7"
+                />
               </svg>
             </button>
 
@@ -77,6 +95,7 @@ const OrderSummary = () => {
           </div>
         </div>
 
+        {/* Promo Code Section */}
         <div>
           <label className="text-base font-medium uppercase text-gray-600 block mb-2">
             Promo Code
@@ -95,6 +114,7 @@ const OrderSummary = () => {
 
         <hr className="border-gray-500/30 my-5" />
 
+        {/* Totals */}
         <div className="space-y-4">
           <div className="flex justify-between text-base font-medium">
             <p className="uppercase text-gray-600">Items {getCartCount()}</p>
@@ -106,7 +126,9 @@ const OrderSummary = () => {
           </div>
           <div className="flex justify-between">
             <p className="text-gray-600">Tax (2%)</p>
-            <p className="font-medium text-gray-800">{currency}{Math.floor(getCartAmount() * 0.02)}</p>
+            <p className="font-medium text-gray-800">
+              {currency}{Math.floor(getCartAmount() * 0.02)}
+            </p>
           </div>
           <div className="flex justify-between text-lg md:text-xl font-medium border-t pt-3">
             <p>Total</p>
@@ -115,7 +137,10 @@ const OrderSummary = () => {
         </div>
       </div>
 
-      <button onClick={createOrder} className="w-full bg-orange-600 text-white py-3 mt-5 hover:bg-orange-700">
+      <button
+        onClick={handlePlaceOrder}
+        className="w-full bg-orange-600 text-white py-3 mt-5 hover:bg-orange-700"
+      >
         Place Order
       </button>
     </div>
